@@ -1,5 +1,5 @@
 package jeopardy_game;
 
-public class GameLoader {
-    
+public interface GameLoader {
+    GameData load(String filename);
 }

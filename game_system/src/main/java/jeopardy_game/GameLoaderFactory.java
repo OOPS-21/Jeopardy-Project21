@@ -1,5 +1,5 @@
 package jeopardy_game;
 
-public class GameLoaderFactory {
-    
+public interface GameLoaderFactory {
+    GameLoader createLoader();
 }
