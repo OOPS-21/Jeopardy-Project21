@@ -16,7 +16,7 @@ public class GameData {
         for (Category cat : categories) {
             if (cat.equals(category)) {
                 for (Question question : cat.getQuestions()) {
-                    if (question.getValue() == pointValue) {
+                    if (question.getPoints() == pointValue) {
                         return question;
                     }
                 }
