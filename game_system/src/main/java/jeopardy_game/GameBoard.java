@@ -19,7 +19,7 @@ public class GameBoard {
 
                 for(Question question : category.getQuestions()) {
                     if (!question.isAnswered()) {
-                        System.out.print("| " + question.getPoints() + " | "); // Display point value if not answered
+                        System.out.print("| " + question.getValue() + " | "); // Display point value if not answered
                     }                   
                 }
                 System.out.println();
