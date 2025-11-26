@@ -1,8 +1,12 @@
 package jeopardy_game;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.util.*;
 
 public class JSONLoader implements GameLoader {
     // Implement the load method to load game data from a JSON file
@@ -12,8 +16,13 @@ public class JSONLoader implements GameLoader {
         Map<String, Category> categoryMap = new HashMap<>();
 
         try {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);
+            if (inputStream == null) {
+                throw new RuntimeException("Resource not found: " + filename);
+            }
+
             ObjectMapper mapper = new ObjectMapper();
-            List<Map<String, Object>> data = mapper.readValue(new File(filename), List.class);
+            List<Map<String, Object>> data = mapper.readValue(inputStream, List.class);
 
             for (Map<String, Object> row : data) {
                 String categoryName = (String) row.get("Category");

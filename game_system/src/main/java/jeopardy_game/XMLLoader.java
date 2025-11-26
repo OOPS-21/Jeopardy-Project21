@@ -1,8 +1,12 @@
 package jeopardy_game;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import java.io.File;
-import java.util.*;
 
 public class XMLLoader implements GameLoader {
     // Implement the load method to load game data from an XML file
@@ -12,17 +16,18 @@ public class XMLLoader implements GameLoader {
         Map<String, Category> categoryMap = new HashMap<>();
 
         try {
-            XmlMapper xmlMapper = new XmlMapper();
-            Map<String, List<Map<String, Object>>> root = xmlMapper.readValue(
-                new File(filename),
-                Map.class
-            );
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);
+            if (inputStream == null) {
+                throw new RuntimeException("Resource not found: " + filename);
+            }
 
-            List<Map<String, Object>> data = root.get("QuestionItem");
+            XmlMapper xmlMapper = new XmlMapper();
+            Map<String, Object> root = xmlMapper.readValue(inputStream, Map.class);
+            List<Map<String, Object>> data = (List<Map<String, Object>>) root.get("QuestionItem");
 
                 for (Map<String, Object> row : data) {
                     String categoryName = (String) row.get("Category");
-                    int value = (int) row.get("Value");
+                    int value = Integer.parseInt(row.get("Value").toString());
                     String questionStr = (String) row.get("QuestionText");
                     Map<String,Object> optionsObj = (Map<String,Object>) row.get("Options");
                     String correctAnswer = (String) row.get("CorrectAnswer");
@@ -35,10 +40,10 @@ public class XMLLoader implements GameLoader {
                     }
 
                     Map<String, String> optionsMap = new HashMap<>();
-                    optionsMap.put("A", (String) optionsObj.get("A"));
-                    optionsMap.put("B", (String) optionsObj.get("B"));
-                    optionsMap.put("C", (String) optionsObj.get("C"));
-                    optionsMap.put("D", (String) optionsObj.get("D"));
+                    optionsMap.put("A", (String) optionsObj.get("OptionA"));
+                    optionsMap.put("B", (String) optionsObj.get("OptionB"));
+                    optionsMap.put("C", (String) optionsObj.get("OptionC"));
+                    optionsMap.put("D", (String) optionsObj.get("OptionD"));
                   
                     Question question = new Question(questionStr, value, optionsMap, correctAnswer);
                     category.addQuestion(question);
