@@ -18,7 +18,7 @@ public class Game {
     }
     
     public static Game getGame() {
-         if (gameInstance == null) {
+        if (gameInstance == null) {
             gameInstance = new Game();
         }
         return gameInstance;
@@ -87,7 +87,7 @@ public class Game {
 
             // 2. Show the question and options
             q.display(); // maybe prints question & options
-            String answer = player.getAnswer(); // input via Scanner
+            String answer = player.getAnswer(q); // input via Scanner
 
             // 3. Check if correct and update score
             if (q.checkAnswer(answer)) {
@@ -95,12 +95,20 @@ public class Game {
                 player.addPoints(q.getPoints());
             } else {
                 System.out.println("Wrong! Correct answer: " + q.getCorrectAnswer());
+                player.subtractPoints(q.getPoints());
             }
-
             q.setAnswered(true);
 
-            // 4. Move to next player
+            displayScores();
+            System.out.println("\n");
+
             currentPlayer = (currentPlayer + 1) % players.size();
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         // Game over

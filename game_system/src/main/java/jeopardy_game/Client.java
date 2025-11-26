@@ -17,15 +17,28 @@ public class Client {
 
         System.out.println("Choose a file to load:");
         for (int i = 0; i < fileOptions.size(); i++) {
-           System.out.println((i + 1) + ". " + fileOptions.get(i));
+            System.out.println((i + 1) + ". " + fileOptions.get(i));
         }
 
         Scanner sc = new Scanner(System.in);
-        System.out.print("Enter the number of your choice: ");
-        int fileChoice = sc.nextInt();
+        int fileChoice = -1;
 
-        if (fileChoice < 1 || fileChoice > fileOptions.size()) {
-            throw new IllegalArgumentException("Invalid choice.");
+        while (true) {
+            System.out.print("Enter the number of your choice: ");
+            String input = sc.nextLine();
+
+            try {
+                fileChoice = Integer.parseInt(input);
+
+                if (fileChoice >= 1 && fileChoice <= fileOptions.size()) {
+                    break;
+                } 
+                else {
+                    System.out.println("Invalid choice. Please enter a number from 1 to " + fileOptions.size());
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
         }
 
         String selectedFile = fileOptions.get(fileChoice - 1);
@@ -51,16 +64,19 @@ public class Client {
         while (true) {
             System.out.print("Enter number of players (1-4): ");
 
-            if (sc.hasNextInt()) {
+            try {
                 numPlayers = sc.nextInt();
                 sc.nextLine();
 
                 if (numPlayers >= 1 && numPlayers <= 4) {
                     break;
                 }
+                else {
+                    System.out.println("Invalid input. Please enter a number from 1-4.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
             }
-
-            System.out.println("Invalid input. Please enter a number from 1-4.");
         }
 
         for (int i = 0; i < numPlayers; i++) {
@@ -81,7 +97,7 @@ public class Client {
 
         game.setCurrentPlayer((int)(Math.random() * numPlayers));
         try {
-            Thread.sleep(3000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

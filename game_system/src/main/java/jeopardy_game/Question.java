@@ -37,10 +37,7 @@ public class Question {
     }
 
     public boolean checkAnswer(String answer) {
-        if (answer.equalsIgnoreCase(correctAnswer)) {
-            return true;
-        } 
-        return false;
+        return answer.equalsIgnoreCase(correctAnswer);
     }
 
 }

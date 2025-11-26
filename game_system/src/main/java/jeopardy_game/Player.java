@@ -27,36 +27,71 @@ public class Player {
     }
 
     //extra getters
-     public int getIndex() {
+    public int getIndex() {
         return this.index;
     }
     public String getName() {
         return this.name;
     }
 
-    public Question selectQuestion(GameBoard board) {
-        Scanner sc = new Scanner(System.in);
+    public Category selectCategory(GameBoard board, Scanner sc) {
         List<Category> categories = board.getGameData().getCategories();
         Category selectedCategory = null;
 
-        // Select category
         while (selectedCategory == null) {
             for (int i = 0; i < categories.size(); i++) {
-                System.out.println((i + 1) + ". " + categories.get(i).getName());
+                Category cat = categories.get(i);
+                boolean hasUnanswered = false;
+                for (Question q : cat.getQuestions()) {
+                    if (!q.isAnswered()) {
+                        hasUnanswered = true;
+                        break;
+                    }
+                }
+
+                if (hasUnanswered) {
+                    System.out.println((i + 1) + ". " + cat.getName());
+                }
             }
 
             System.out.print("Choose a category by number: ");
-            int catIndex = sc.nextInt() - 1;
-            sc.nextLine();
+            String input = sc.nextLine();
+            int catIndex;
+            try {
+                catIndex = Integer.parseInt(input) - 1;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
 
             if (catIndex >= 0 && catIndex < categories.size()) {
-                selectedCategory = categories.get(catIndex);
+                Category cat = categories.get(catIndex);
+
+                boolean hasUnanswered = false;
+                for (Question q : cat.getQuestions()) {
+                    if (!q.isAnswered()) {
+                        hasUnanswered = true;
+                        break;
+                    }
+                }
+
+                if (hasUnanswered) {
+                    selectedCategory = cat;
+                } else {
+                    System.out.println("All questions in that category have been answered. Choose another.");
+                }
             } else {
                 System.out.println("Invalid category number. Try again.");
             }
         }
 
-        // Select question
+        return selectedCategory;
+    }
+
+    public Question selectQuestion(GameBoard board) {
+        Scanner sc = new Scanner(System.in);
+        Category selectedCategory = selectCategory(board, sc);
+
         List<Question> questions = selectedCategory.getQuestions();
         Question selectedQuestion = null;
 
@@ -70,8 +105,14 @@ public class Player {
             }
 
             System.out.print("Choose a question by number: ");
-            int qIndex = sc.nextInt() - 1;
-            sc.nextLine();
+            String input = sc.nextLine();
+            int qIndex;
+            try {
+                qIndex = Integer.parseInt(input) - 1;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
 
             if (qIndex >= 0 && qIndex < questions.size() && !questions.get(qIndex).isAnswered()) {
                 selectedQuestion = questions.get(qIndex);
@@ -83,11 +124,21 @@ public class Player {
         return selectedQuestion;
     }
 
-    public String getAnswer() {
+    public String getAnswer(Question q) {
         Scanner sc = new Scanner(System.in);
-        System.out.print("Choose an answer by letter: ");
-        String answer = sc.next();
-        return answer.trim();
+        String answer = "";
+        while (true) {
+            System.out.print("Choose an answer by letter: ");
+            answer = sc.next().trim().toUpperCase();
+
+            if (q.getOptions().containsKey(answer)) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please choose one of the available options: " 
+                    + q.getOptions().keySet());
+            }
+        }
+        return answer;
     }
 
     @Override

@@ -11,11 +11,12 @@ public class GameBoard {
 
     public void displayBoard() {
         System.out.println("Jeopardy Game Board:");
-
     
+        int colWidth = 25;
+
         try {
             for(Category category : gameData.getCategories()) {
-                System.out.print("| " + category.getName() + " | "); // Display category names
+                System.out.printf("| %-"+colWidth+"s", category.getName());// Display category names
 
                 for(Question question : category.getQuestions()) {
                     if (!question.isAnswered()) {
