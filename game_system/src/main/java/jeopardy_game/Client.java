@@ -156,7 +156,6 @@ public class Client {
             ).build()
         );
 
-        Logger.getLogger().generateReport();
         game.notifySubscribers(
             new Event.Builder(
                 game.getCaseId(),
@@ -164,6 +163,7 @@ public class Client {
                 java.time.Instant.now().toString()
             ).build()
         );
+        game.generateReport();
 
         game.notifySubscribers(
             new Event.Builder(

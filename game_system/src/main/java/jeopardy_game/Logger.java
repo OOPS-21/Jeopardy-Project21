@@ -36,10 +36,6 @@ public class Logger implements Subscriber {
         events.add(event);
     }
 
-    public void generateReport() {
-
-    }
-
     public void generateEventLogs() {
         for (Event event : events) {
             try (FileWriter writer = new FileWriter(logFile, true)) {
