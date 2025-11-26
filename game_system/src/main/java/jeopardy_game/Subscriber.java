@@ -1,5 +1,5 @@
 package jeopardy_game;
 
-public class Subscriber {
-    
+public interface Subscriber {
+    public void update(String log);
 }
