@@ -5,7 +5,7 @@ import java.util.Map;
 public class Question {
     private String questionStr;
     private Map<String, String> options;
-    private String answer;
+    private String correctAnswer;
     private int points;
     private boolean answered;
 
@@ -13,7 +13,7 @@ public class Question {
         this.questionStr = questionStr;
         this.points = points;
         this.options = options;
-        this.answer = answer;
+        this.correctAnswer = correctAnswer;
         this.answered = false;
     }
 
@@ -21,11 +21,26 @@ public class Question {
     public boolean isAnswered() {return answered;}
     public String getQuestionStr() {return questionStr;}
     public Map<String, String> getOptions() {return options;}
-    public String getAnswer() {return answer;}
+    public String getCorrectAnswer() {return correctAnswer;}
     public int getPoints() {return points;}
 
     // Setters
     public void setAnswered(boolean answered) {
         this.answered = answered;
     }  
+
+    public void display() {
+        System.out.println(questionStr);
+        for (Map.Entry<String, String> option : options.entrySet()) {
+            System.out.println(option.getKey() + ": " + option.getValue());
+        }
+    }
+
+    public boolean checkAnswer(String answer) {
+        if (answer.equalsIgnoreCase(correctAnswer)) {
+            return true;
+        } 
+        return false;
+    }
+
 }

@@ -35,6 +35,7 @@ public class GameBoard {
     public Question getQuestion(Category category, int pointValue) {
         return gameData.getQuestion(category, pointValue);
     }
+
     public void markQuestion(Category category, int pointValue) {
         Question question = gameData.getQuestion(category, pointValue);
         if (question != null) {
@@ -57,4 +58,9 @@ public class GameBoard {
         }
         return true; // all questions are answered
     }
+
+    public GameData getGameData() {
+        return this.gameData;
+    } 
+
 }
