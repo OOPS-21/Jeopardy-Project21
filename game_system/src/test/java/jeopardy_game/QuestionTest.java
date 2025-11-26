@@ -4,85 +4,101 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class QuestionTest {
 
     @Test
     void constructorAndGetters() {
-        String[] options = {"int num", "float num", "num int", "integer num"};
-        Question q = new Question("Which of the following declares an integer variable in C++?", options, 'A', 100);
+        Map<String, String> options = new HashMap<>();
+        options.put("A", "int num");
+        options.put("B", "float num");
+        options.put("C", "num int");
+        options.put("D", "integer num");
+
+        Question q = new Question("Which of the following declares an integer variable in C++?", 100, options, "A");
 
         assertEquals("Which of the following declares an integer variable in C++?", q.getQuestionStr());
-        assertArrayEquals(options, q.getOptions());
-        assertEquals('A', q.getAnswer());
+        assertEquals(options, q.getOptions());
+        assertEquals("A", q.getAnswer());
         assertEquals(100, q.getPoints());
         assertFalse(q.isAnswered(), "New questions should not be answered by default");
     }
 
     @Test
-    void settersAndAnsweredFlag() { // test the setters' ability to change the question data.
-        String[] options = {"int num", "float num", "num int", "integer num"};
-        Question q = new Question("Which of the following declares an integer variable in C++?", options, 'A', 100);
+    void answeredFlagOnlySetter() {
+        Map<String, String> options = new HashMap<>();
+        options.put("A", "string");
+        options.put("B", "char");
+        options.put("C", "bool");
+        options.put("D", "text");
 
-        q.setQuestionStr("Which data type is used to store a single character?");
-        q.setOptions(new String[]{"string","char","bool","text"});
-        q.setAnswer('B');
-        q.setPoints(200);
+        Question q = new Question("Which data type is used to store a single character?", 200, options, "B");
+
+        // only answered flag has a setter; ensure it works and other fields remain as constructed
+        assertFalse(q.isAnswered());
         q.setAnswered(true);
+        assertTrue(q.isAnswered());
 
         assertEquals("Which data type is used to store a single character?", q.getQuestionStr());
-        assertArrayEquals(new String[]{"string","char","bool","text"}, q.getOptions());
-        assertEquals('B', q.getAnswer());
+        assertEquals(options, q.getOptions());
+        assertEquals("B", q.getAnswer());
         assertEquals(200, q.getPoints());
-        assertTrue(q.isAnswered());
     }
 
     @Test
     void optionsArrayIsMutableThroughReference() {
-        String[] options = {"First", "Second"};
-        Question q = new Question("Mutable?", options, 'A', 10);
+        Map<String, String> options = new HashMap<>();
+        options.put("A", "First");
+        options.put("B", "Second");
 
-        // Modify the original array reference after construction
-        options[0] = "Changed";
+        Question q = new Question("Mutable?", 10, options, "A");
 
-        // The Question stores the same array reference, so the change should be visible
-        assertEquals("Changed", q.getOptions()[0]);
+        // Modify the original map reference after construction
+        options.put("A", "Changed");
+
+        // The Question stores the same map reference, so the change should be visible
+        assertEquals("Changed", q.getOptions().get("A"));
     }
 
     @Test
     void constructorAcceptsNullsAndBehavesPredictably() {
         // question string null
-        Question q1 = new Question(null, new String[]{"A"}, 'A', 0);
+        Map<String, String> opts = new HashMap<>();
+        opts.put("A", "A");
+        Question q1 = new Question(null, 0, opts, "A");
         assertNull(q1.getQuestionStr());
-        assertArrayEquals(new String[]{"A"}, q1.getOptions());
+        assertEquals(opts, q1.getOptions());
 
         // options null
-        Question q2 = new Question("Q", null, 'B', 10);
+        Question q2 = new Question("Q", 10, null, "B");
         assertNull(q2.getOptions());
-        // accessing the options array should throw a NullPointerException
+        // accessing the options map should throw a NullPointerException
         assertThrows(NullPointerException.class, () -> {
-            String s = q2.getOptions()[0];
+            String s = q2.getOptions().get("A");
         });
 
         // answer and points can be any values (no validation in class)
-        Question q3 = new Question("Q3", new String[]{"X"}, '\0', -5);
-        assertEquals('\0', q3.getAnswer());
+        Question q3 = new Question("Q3", -5, opts, null);
+        assertNull(q3.getAnswer());
         assertEquals(-5, q3.getPoints());
     }
 
     @Test
     void settersHandleNullAndNegativePoints() {
-        Question q = new Question("Q", new String[]{"A","B"}, 'A', 100);
+        // Only answered flag is mutable via setter; test it and that fields remain otherwise immutable
+        Map<String, String> options = new HashMap<>();
+        options.put("A", "A");
+        Question q = new Question("Q", 100, options, "A");
 
-        // setOptions to null
-        q.setOptions(null);
-        assertNull(q.getOptions());
+        q.setAnswered(true);
+        assertTrue(q.isAnswered());
 
-        // setQuestionStr to null
-        q.setQuestionStr(null);
-        assertNull(q.getQuestionStr());
-
-        // set negative points
-        q.setPoints(-999);
-        assertEquals(-999, q.getPoints());
+        // other fields should remain as constructed
+        assertEquals("Q", q.getQuestionStr());
+        assertEquals(options, q.getOptions());
+        assertEquals("A", q.getAnswer());
+        assertEquals(100, q.getPoints());
     }
 }
