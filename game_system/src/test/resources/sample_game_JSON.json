@@ -1,0 +1,16 @@
+[
+  {
+    "Category": "General",
+    "Value": 100,
+    "Question": "Which of the following declares an integer variable in C++?",
+    "Options": {"A": "int num", "B": "float num", "C": "num int", "D": "integer num"},
+    "CorrectAnswer": "A"
+  },
+  {
+    "Category": "General",
+    "Value": 200,
+    "Question": "Which data type is used to store a single character?",
+    "Options": {"A": "string", "B": "char", "C": "bool", "D": "text"},
+    "CorrectAnswer": "B"
+  }
+]

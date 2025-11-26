@@ -1,0 +1,26 @@
+<QuestionItems>
+  <QuestionItem>
+    <Category>General</Category>
+    <Value>100</Value>
+    <QuestionText>Which of the following declares an integer variable in C++?</QuestionText>
+    <Options>
+      <OptionA>int num</OptionA>
+      <OptionB>float num</OptionB>
+      <OptionC>num int</OptionC>
+      <OptionD>integer num</OptionD>
+    </Options>
+    <CorrectAnswer>A</CorrectAnswer>
+  </QuestionItem>
+  <QuestionItem>
+    <Category>General</Category>
+    <Value>200</Value>
+    <QuestionText>Which data type is used to store a single character?</QuestionText>
+    <Options>
+      <OptionA>string</OptionA>
+      <OptionB>char</OptionB>
+      <OptionC>bool</OptionC>
+      <OptionD>text</OptionD>
+    </Options>
+    <CorrectAnswer>B</CorrectAnswer>
+  </QuestionItem>
+</QuestionItems>

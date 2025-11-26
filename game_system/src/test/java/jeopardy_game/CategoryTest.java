@@ -17,16 +17,21 @@ public class CategoryTest {
         Category cat = new Category("General");
 
         assertEquals("General", cat.getName());
-        // questions list is not initialized by the constructor in the current implementation
-        assertNull(cat.getQuestions(), "questions should be null until initialized");
+        // questions list is initialized to an empty list in the current implementation
+        assertNotNull(cat.getQuestions(), "questions should be initialized to an empty list");
+        assertEquals(0, cat.getQuestions().size());
     }
 
     @Test
     void addQuestionWithoutInitializationThrowsNPE() {
+        // Category now initializes the questions list, so addQuestion should work without reflection
         Category cat = new Category("NullCat");
         Map<String, String> opts = new HashMap<>();
         opts.put("A", "A");
-        assertThrows(NullPointerException.class, () -> cat.addQuestion(new Question("X", 1, opts, "A")));
+        Question q = new Question("X", 1, opts, "A");
+        cat.addQuestion(q);
+        assertEquals(1, cat.getQuestions().size());
+        assertSame(q, cat.getQuestions().get(0));
     }
 
     @Test

@@ -83,12 +83,13 @@ public class GameBoardTest {
         GameData gd = new GameData(cats);
         GameBoard board = new GameBoard(gd);
 
-        // Initially none answered -> current implementation returns true
-        assertTrue(board.allQuestionsAnswered(), "Current implementation returns true when no questions are answered");
+        // Initially none answered -> should return false
+        assertFalse(board.allQuestionsAnswered(), "No questions answered -> allQuestionsAnswered should be false");
 
-        // Mark one question answered -> current implementation returns false
+        // Mark both questions answered -> should return true
         q1.setAnswered(true);
-        assertFalse(board.allQuestionsAnswered(), "Current implementation returns false after a question is marked answered");
+        q2.setAnswered(true);
+        assertTrue(board.allQuestionsAnswered(), "All questions answered -> allQuestionsAnswered should be true");
     }
 
     @Test
