@@ -9,6 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ParsingTest {
 
     @Test
+    void csvLoader_resourceNotFound_throws() {
+    CSVLoader loader = new CSVLoader();
+    assertThrows(RuntimeException.class, () -> loader.load("nonexistent_file.csv"));    
+    }
+
+    @Test
     void csvLoaderParsesSampleFile() {
         CSVLoader loader = new CSVLoader();
         GameData data = loader.load("sample_game_CSV.csv");
