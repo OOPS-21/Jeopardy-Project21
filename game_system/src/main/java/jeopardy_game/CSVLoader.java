@@ -1,8 +1,14 @@
 package jeopardy_game;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.opencsv.CSVReader;
-import java.io.FileReader;
-import java.util.*;
 
 public class CSVLoader implements GameLoader {
     // Implement the load method to load game data from a CSV file
@@ -11,7 +17,13 @@ public class CSVLoader implements GameLoader {
         List<Category> categories = new ArrayList<>();
         Map<String, Category> categoryMap = new HashMap<>();
             
-        try (CSVReader reader = new CSVReader(new FileReader(filename))) {
+        try {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename);
+            if (inputStream == null) {
+                throw new FileNotFoundException("Resource not found: " + filename);
+            }
+
+            CSVReader reader = new CSVReader(new InputStreamReader(inputStream));
             String[] row;
             reader.readNext();
             

@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Game {
     private static Game gameInstance;
+    private GameData gameData;
     private List<Subscriber> subscribers;
     private List<Player> players;
     private GameBoard board;
@@ -13,6 +14,7 @@ public class Game {
     private Game() {
         this.subscribers =  new ArrayList<>();
         this.players =  new ArrayList<>();
+        this.gameData = null;
     }
     
     public static Game getGame() {
@@ -28,7 +30,8 @@ public class Game {
 
    public void loadGame(String filename) {
         GameLoader loader = loaderFactory.createLoader();
-        loader.load(filename);
+        this.gameData = loader.load(filename);
+        this.board = new GameBoard(this.gameData);
     }
 
     public void subscribe(Subscriber subscriber) {
@@ -73,8 +76,6 @@ public class Game {
     }
 
     public void start() {
-        currentPlayer = 0; // start with the first player
-
         while (!board.allQuestionsAnswered()) {
             board.displayBoard();
 

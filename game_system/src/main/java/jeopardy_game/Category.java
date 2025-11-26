@@ -1,5 +1,6 @@
 package jeopardy_game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Category {
@@ -8,6 +9,7 @@ public class Category {
 
     public Category(String name) {
         this.name = name;
+        this.questions = new ArrayList<>();
     }
 
     // Getters

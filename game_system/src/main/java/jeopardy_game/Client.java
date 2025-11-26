@@ -1,5 +1,4 @@
 package jeopardy_game;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -80,18 +79,14 @@ public class Client {
         System.out.println("Welcome to the game of Jeopardy!");
         System.out.println("Choosing a random player to start...");
 
-        game.setCurrentPlayer((int)(Math.random() * 4) + 1);
+        game.setCurrentPlayer((int)(Math.random() * numPlayers));
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Player" + game.getCurrentPlayerName() + "goes first");
+        System.out.println("Player " + game.getCurrentPlayerName() + " goes first!");
 
         game.start();
-
-        
-
-        
     }
 }

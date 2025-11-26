@@ -51,7 +51,7 @@ public class GameBoard {
     public boolean allQuestionsAnswered() { 
         for (Category category : gameData.getCategories()) { // iterate through all categories
             for (Question question : category.getQuestions()) { // iterate through all questions in category
-                if (!question.isAnswered() == false) { // if any question is not answered
+                if (!question.isAnswered()) { // if any question is not answered
                     return false; // not all questions are answered
                 }
             }

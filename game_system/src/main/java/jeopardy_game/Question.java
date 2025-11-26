@@ -9,7 +9,7 @@ public class Question {
     private int points;
     private boolean answered;
 
-    public Question(String questionStr, int points, Map<String, String> options, String answer) {
+    public Question(String questionStr, int points, Map<String, String> options, String correctAnswer) {
         this.questionStr = questionStr;
         this.points = points;
         this.options = options;
