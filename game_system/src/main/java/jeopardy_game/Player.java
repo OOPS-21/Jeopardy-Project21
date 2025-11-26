@@ -34,7 +34,8 @@ public class Player {
         return this.name;
     }
 
-    public Category selectCategory(GameBoard board, Scanner sc) {
+    public Category selectCategory(GameBoard board) {
+        Scanner sc = new Scanner(System.in);
         List<Category> categories = board.getGameData().getCategories();
         Category selectedCategory = null;
 
@@ -55,7 +56,12 @@ public class Player {
             }
 
             System.out.print("Choose a category by number: ");
-            String input = sc.nextLine();
+            String input = sc.nextLine().trim();
+
+            if (input.equalsIgnoreCase("end")) {
+                return null;
+            }
+
             int catIndex;
             try {
                 catIndex = Integer.parseInt(input) - 1;
@@ -88,10 +94,12 @@ public class Player {
         return selectedCategory;
     }
 
-    public Question selectQuestion(GameBoard board) {
-        Scanner sc = new Scanner(System.in);
-        Category selectedCategory = selectCategory(board, sc);
+    public Question selectQuestion(GameBoard board, Category selectedCategory) {        
+        if (selectedCategory == null) {
+            return null;
+        }
 
+        Scanner sc = new Scanner(System.in);
         List<Question> questions = selectedCategory.getQuestions();
         Question selectedQuestion = null;
 
@@ -105,7 +113,12 @@ public class Player {
             }
 
             System.out.print("Choose a question by number: ");
-            String input = sc.nextLine();
+            String input = sc.nextLine().trim();
+            
+            if (input.equalsIgnoreCase("end")) {
+                return null;
+            }
+
             int qIndex;
             try {
                 qIndex = Integer.parseInt(input) - 1;
@@ -130,6 +143,10 @@ public class Player {
         while (true) {
             System.out.print("Choose an answer by letter: ");
             answer = sc.next().trim().toUpperCase();
+
+            if (answer.equalsIgnoreCase("end")) {
+                return null;
+            }
 
             if (q.getOptions().containsKey(answer)) {
                 break;

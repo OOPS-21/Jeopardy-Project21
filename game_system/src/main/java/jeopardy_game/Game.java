@@ -1,9 +1,11 @@
 package jeopardy_game;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Game {
     private static Game gameInstance;
+    private final String caseId;
     private GameData gameData;
     private List<Subscriber> subscribers;
     private List<Player> players;
@@ -12,6 +14,7 @@ public class Game {
     private int currentPlayer;
 
     private Game() {
+        this.caseId = UUID.randomUUID().toString();
         this.subscribers =  new ArrayList<>();
         this.players =  new ArrayList<>();
         this.gameData = null;
@@ -28,7 +31,7 @@ public class Game {
         this.loaderFactory = factory;
     }
 
-   public void loadGame(String filename) {
+    public void loadGame(String filename) {
         GameLoader loader = loaderFactory.createLoader();
         this.gameData = loader.load(filename);
         this.board = new GameBoard(this.gameData);
@@ -42,10 +45,14 @@ public class Game {
         subscribers.remove(subscriber);
     }
 
-    public void notifySubscribers(String log) {
+    public void notifySubscribers(Event event) {
         for (Subscriber subscriber : subscribers) {
-            subscriber.update(log);
+            subscriber.update(event);
         }
+    }
+
+    public String getCaseId() {
+        return this.caseId;
     }
 
     public void addPlayer(Player player) {
@@ -82,20 +89,92 @@ public class Game {
             Player player = getCurrentPlayer();
             System.out.println("It's " + player.getName() + "'s turn!");
 
-            // 1. Ask player to select category & value
-            Question q = player.selectQuestion(board); // can implement selection in Player or via CLI input
+            Category c = player.selectCategory(board);
+            if (c == null) {
+                break;
+            }
+            this.notifySubscribers(
+                    new Event.Builder(
+                        this.getCaseId(),
+                        "Select Category",
+                        java.time.Instant.now().toString()
+                    )
+                    .playerId(String.valueOf(player.getIndex()))
+                    .category(c.getName())
+                    .build()
+            );
 
-            // 2. Show the question and options
-            q.display(); // maybe prints question & options
-            String answer = player.getAnswer(q); // input via Scanner
+            Question q = player.selectQuestion(board, c);
+            if (q == null) {
+                break;
+            }
+            this.notifySubscribers(
+                    new Event.Builder(
+                        this.getCaseId(),
+                        "Select Question",
+                        java.time.Instant.now().toString()
+                    )
+                    .playerId(String.valueOf(player.getIndex()))
+                    .questionValue(q.getPoints())
+                    .category(c.getName())
+                    .build()
+            );
 
-            // 3. Check if correct and update score
-            if (q.checkAnswer(answer)) {
-                System.out.println("Correct!");
-                player.addPoints(q.getPoints());
-            } else {
-                System.out.println("Wrong! Correct answer: " + q.getCorrectAnswer());
-                player.subtractPoints(q.getPoints());
+            q.display();
+            String answer = player.getAnswer(q);
+
+            if (answer == null) {
+                break;
+            }
+            else {
+                this.notifySubscribers(
+                    new Event.Builder(
+                        this.getCaseId(),
+                        "Answer Question",
+                        java.time.Instant.now().toString()
+                    )
+                    .playerId(String.valueOf(player.getIndex()))
+                    .questionValue(q.getPoints())
+                    .category(c.getName())
+                    .answerGiven(answer)
+                    .build()
+                );
+
+                if (q.checkAnswer(answer)) {
+                    System.out.println("Correct!");
+                    player.addPoints(q.getPoints());
+                    this.notifySubscribers(
+                        new Event.Builder(
+                            this.getCaseId(),
+                            "Score Updated",
+                            java.time.Instant.now().toString()
+                        )
+                        .playerId(String.valueOf(player.getIndex()))
+                        .questionValue(q.getPoints())
+                        .category(c.getName())
+                        .answerGiven(answer)
+                        .result("Correct")
+                        .scoreAfterPlay(player.getScore())
+                        .build()
+                    );
+                } else {
+                    System.out.println("Wrong! Correct answer: " + q.getCorrectAnswer());
+                    player.subtractPoints(q.getPoints());
+                    this.notifySubscribers(
+                        new Event.Builder(
+                            this.getCaseId(),
+                            "Score Updated",
+                            java.time.Instant.now().toString()
+                        )
+                        .playerId(String.valueOf(player.getIndex()))
+                        .questionValue(q.getPoints())
+                        .category(c.getName())
+                        .answerGiven(answer)
+                        .result("Wrong")
+                        .scoreAfterPlay(player.getScore())
+                        .build()
+                    );
+                }
             }
             q.setAnswered(true);
 
@@ -109,10 +188,11 @@ public class Game {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+        }    
+    }
 
-        // Game over
-        System.out.println("All questions answered! Final scores:");
+    public void end() {
+        System.out.println("Game Over! Thanks for Playing!");
         displayScores();
     }
     
