@@ -21,7 +21,7 @@ public class QuestionTest {
 
         assertEquals("Which of the following declares an integer variable in C++?", q.getQuestionStr());
         assertEquals(options, q.getOptions());
-        assertEquals("A", q.getAnswer());
+        assertEquals("A", q.getCorrectAnswer());
         assertEquals(100, q.getPoints());
         assertFalse(q.isAnswered(), "New questions should not be answered by default");
     }
@@ -43,7 +43,7 @@ public class QuestionTest {
 
         assertEquals("Which data type is used to store a single character?", q.getQuestionStr());
         assertEquals(options, q.getOptions());
-        assertEquals("B", q.getAnswer());
+        assertEquals("B", q.getCorrectAnswer());
         assertEquals(200, q.getPoints());
     }
 
@@ -81,7 +81,7 @@ public class QuestionTest {
 
         // answer and points can be any values (no validation in class)
         Question q3 = new Question("Q3", -5, opts, null);
-        assertNull(q3.getAnswer());
+        assertNull(q3.getCorrectAnswer());
         assertEquals(-5, q3.getPoints());
     }
 
@@ -98,7 +98,7 @@ public class QuestionTest {
         // other fields should remain as constructed
         assertEquals("Q", q.getQuestionStr());
         assertEquals(options, q.getOptions());
-        assertEquals("A", q.getAnswer());
+        assertEquals("A", q.getCorrectAnswer());
         assertEquals(100, q.getPoints());
     }
 }
