@@ -21,13 +21,17 @@ public class GameBoard {
                 for(Question question : category.getQuestions()) {
                     if (!question.isAnswered()) {
                         System.out.print("| " + question.getPoints() + " | "); // Display point value if not answered
-                    }                   
+                    }   
+                    else {
+                        System.out.print("| --- | ");
+                    }                
                 }
                 System.out.println();
             } 
         } catch (Exception e) {
             System.err.println("Error displaying game board: " + e.getMessage());
         }
+        System.out.println("\n");
     }
 
 

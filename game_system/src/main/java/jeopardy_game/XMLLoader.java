@@ -44,7 +44,7 @@ public class XMLLoader implements GameLoader {
                     optionsMap.put("B", (String) optionsObj.get("OptionB"));
                     optionsMap.put("C", (String) optionsObj.get("OptionC"));
                     optionsMap.put("D", (String) optionsObj.get("OptionD"));
-                  
+                    
                     Question question = new Question(questionStr, value, optionsMap, correctAnswer);
                     category.addQuestion(question);
                 }

@@ -14,7 +14,9 @@ public class Client {
                 game.getCaseId(),
                 "Start Game",
                 java.time.Instant.now().toString()
-            ).build()
+            )
+            .playerId("System")
+            .build()
         );
 
         List<String> fileOptions = Arrays.asList(
@@ -70,7 +72,9 @@ public class Client {
                 game.getCaseId(),
                 "Load File",
                 java.time.Instant.now().toString()
-            ).build()
+            )
+            .playerId("System")
+            .build()
         );
 
         game.setLoaderFactory(factory);
@@ -81,7 +85,9 @@ public class Client {
                 game.getCaseId(),
                 "File Loaded Successfully", 
                 java.time.Instant.now().toString()
-            ).build()
+            )
+            .playerId("System")
+            .build()
         );
 
         int numPlayers = 0;
@@ -110,6 +116,7 @@ public class Client {
                 java.time.Instant.now().toString()
             )
             .result(numPlayers + " selected")
+            .playerId("System")
             .build()
         );
 
@@ -131,11 +138,15 @@ public class Client {
                     java.time.Instant.now().toString()
                 )
                 .result(p.getName() + " added")
+                .playerId(name)
                 .build()
             );
         }
 
-        System.out.println("Welcome to the game of Jeopardy!");
+        System.out.println("\n" +
+        "*******************************************\n" +
+        "*           WELCOME TO JEOPARDY!          *\n" +
+        "*******************************************\n");
         System.out.println("Choosing a random player to start...");
 
         game.setCurrentPlayer((int)(Math.random() * numPlayers));
@@ -144,7 +155,7 @@ public class Client {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Player " + game.getCurrentPlayerName() + " goes first!");
+        System.out.println("Player " + game.getCurrentPlayerName() + " goes first!\n");
 
         game.start();
         game.end();
@@ -153,7 +164,9 @@ public class Client {
                 game.getCaseId(),
                 "Exit Game",
                 java.time.Instant.now().toString()
-            ).build()
+            )
+            .playerId("System")
+            .build()
         );
 
         game.notifySubscribers(
@@ -161,7 +174,9 @@ public class Client {
                 game.getCaseId(),
                 "Generate Report",
                 java.time.Instant.now().toString()
-            ).build()
+            )
+            .playerId("System")
+            .build()
         );
         game.generateReport();
 
@@ -170,7 +185,9 @@ public class Client {
                 game.getCaseId(),
                 "Generate Event Log",
                 java.time.Instant.now().toString()
-            ).build()
+            )
+            .playerId("System")
+            .build()
         );
         Logger.getLogger().generateEventLogs();
     }

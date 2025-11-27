@@ -106,7 +106,7 @@ public class Game {
                         "Select Category",
                         java.time.Instant.now().toString()
                     )
-                    .playerId(String.valueOf(player.getIndex()))
+                    .playerId(player.getName())
                     .category(c.getName())
                     .build()
             );
@@ -121,7 +121,7 @@ public class Game {
                         "Select Question",
                         java.time.Instant.now().toString()
                     )
-                    .playerId(String.valueOf(player.getIndex()))
+                    .playerId(player.getName())
                     .questionValue(q.getPoints())
                     .questionText(q.getQuestionStr())
                     .category(c.getName())
@@ -141,7 +141,7 @@ public class Game {
                         "Answer Question",
                         java.time.Instant.now().toString()
                     )
-                    .playerId(String.valueOf(player.getIndex()))
+                    .playerId(player.getName())
                     .questionValue(q.getPoints())
                     .questionText(q.getQuestionStr())
                     .category(c.getName())
@@ -150,7 +150,7 @@ public class Game {
                 );
 
                 if (q.checkAnswer(answer)) {
-                    System.out.println("Correct!");
+                    System.out.println(">>Correct!");
                     player.addPoints(q.getPoints());
                     this.notifySubscribers(
                         new Event.Builder(
@@ -158,7 +158,7 @@ public class Game {
                             "Score Updated",
                             java.time.Instant.now().toString()
                         )
-                        .playerId(String.valueOf(player.getIndex()))
+                        .playerId(player.getName())
                         .questionValue(q.getPoints())
                         .category(c.getName())
                         .answerGiven(answer)
@@ -167,7 +167,7 @@ public class Game {
                         .build()
                     );
                 } else {
-                    System.out.println("Wrong! Correct answer: " + q.getCorrectAnswer());
+                    System.out.println(">>Wrong! Correct answer: " + q.getCorrectAnswer());
                     player.subtractPoints(q.getPoints());
                     this.notifySubscribers(
                         new Event.Builder(
@@ -175,7 +175,7 @@ public class Game {
                             "Score Updated",
                             java.time.Instant.now().toString()
                         )
-                        .playerId(String.valueOf(player.getIndex()))
+                        .playerId(player.getName())
                         .questionValue(q.getPoints())
                         .category(c.getName())
                         .answerGiven(answer)
@@ -201,7 +201,11 @@ public class Game {
     }
 
     public void end() {
-        System.out.println("Game Over! Thanks for Playing!");
+        System.out.println("\n" +
+        "*******************************************\n" +
+        "*                Game Over!               *\n" +
+        "*******************************************\n");
+        System.out.println("Thanks for Playing!");
         displayScores();
     }
     
@@ -255,12 +259,7 @@ public class Game {
                 String answerLetter = event.getAnswerGiven();
                 String answerText = q.getOptions().get(answerLetter);
                 String correctness = event.getResult().trim();
-
-                String playerName = players.stream()
-                        .filter(p -> String.valueOf(p.getIndex()).equals(event.getPlayerId()))
-                        .map(Player::getName)
-                        .findFirst()
-                        .orElse("Unknown");
+                String playerName = event.getPlayerId();
 
                 writer.write("Turn " + turn + ": " + playerName + " selected " +
                         event.getCategory() + " for " + points + " pts\n");
@@ -278,7 +277,7 @@ public class Game {
                 writer.write(p.getName() + ": " + p.getScore() + "\n");
             }
 
-            System.out.println("Game Report generated: " + reportFile);
+            System.out.println("\n>>Game Report generated: " + reportFile);
 
         } catch (IOException e) {
             e.printStackTrace();
