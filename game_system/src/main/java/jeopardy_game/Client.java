@@ -1,194 +1,43 @@
 package jeopardy_game;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class Client {
     public static void main(String[] args) {
+        InputHandler input = new InputHandler();
+
         Game game = Game.getGame();
         game.subscribe(Logger.getLogger());
-        GameLoaderFactory factory;
+        game.startUp();
 
-        game.notifySubscribers(
-            new Event.Builder(
-                game.getCaseId(),
-                "Start Game",
-                java.time.Instant.now().toString()
-            )
-            .playerId("System")
-            .build()
-        );
-
+        //File selection
         List<String> fileOptions = Arrays.asList(
-            "sample_game_CSV.csv",
-            "sample_game_JSON.json",
-            "sample_game_XML.xml"
-        );
-
-        System.out.println("Choose a file to load:");
-        for (int i = 0; i < fileOptions.size(); i++) {
-            System.out.println((i + 1) + ". " + fileOptions.get(i));
-        }
-
-        Scanner sc = new Scanner(System.in);
-        int fileChoice = -1;
-
-        while (true) {
-            System.out.print("Enter the number of your choice: ");
-            String input = sc.nextLine().trim();
-
-            try {
-                fileChoice = Integer.parseInt(input);
-
-                if (fileChoice >= 1 && fileChoice <= fileOptions.size()) {
-                    break;
-                } 
-                else {
-                    System.out.println("Invalid choice. Please enter a number from 1 to " + fileOptions.size());
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-            }
-        }
-
-        String selectedFile = fileOptions.get(fileChoice - 1);
-        System.out.println("Extracting data from " + selectedFile);
-
-        if (selectedFile.endsWith("csv")) {
-            factory = new CSVLoaderFactory();
-        }
-        else if (selectedFile.endsWith("json")) {
-            factory = new JSONLoaderFactory();
-        }
-        else if (selectedFile.endsWith("xml")) {
-            factory = new XMLLoaderFactory();
-        }
-        else {
-            throw new IllegalArgumentException("Unknown format");
-        }
-
-        game.notifySubscribers(
-            new Event.Builder(
-                game.getCaseId(),
-                "Load File",
-                java.time.Instant.now().toString()
-            )
-            .playerId("System")
-            .build()
-        );
-
+                    "sample_game_CSV.csv",
+                    "sample_game_JSON.json",
+                    "sample_game_XML.xml"
+                );
+        String selectedFile = input.getFileInput(fileOptions);
+        
+        //Factory selection
+        GameLoaderFactory factory = input.selectFactory(selectedFile);
         game.setLoaderFactory(factory);
         game.loadGame(selectedFile);
 
-        game.notifySubscribers(
-            new Event.Builder(
-                game.getCaseId(),
-                "File Loaded Successfully", 
-                java.time.Instant.now().toString()
-            )
-            .playerId("System")
-            .build()
-        );
-
-        int numPlayers = 0;
-        while (true) {
-            System.out.print("Enter number of players (1-4): ");
-            String input = sc.nextLine().trim();
-            
-            try {
-                numPlayers = Integer.parseInt(input);
-
-                if (numPlayers >= 1 && numPlayers <= 4) {
-                    break;
-                }
-                else {
-                    System.out.println("Invalid input. Please enter a number from 1-4.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
-            }
+        //Player setup
+        int numPlayers = input.getPlayerInput();
+        game.setPlayerCount(numPlayers);
+        for (int i = 1; i <= numPlayers; i++) {
+            String name = input.getPlayerNameInput(i);
+            Player p = new Player(i, name);
+            game.addPlayer(p);
         }
 
-        game.notifySubscribers(
-            new Event.Builder(
-                game.getCaseId(),
-                "Select Player Count",
-                java.time.Instant.now().toString()
-            )
-            .result(numPlayers + " selected")
-            .playerId("System")
-            .build()
-        );
-
-        for (int i = 0; i < numPlayers; i++) {
-            System.out.print("Enter name for Player " + (i + 1) + ": ");
-            String name = sc.nextLine().trim();
-
-            while (name.isEmpty()) {
-                System.out.print("Name cannot be empty. Enter name for Player " + (i + 1) + ": ");
-                name = sc.nextLine().trim();
-            }
-
-            Player p = new Player(i + 1, name);
-            game.addPlayer(p); 
-            game.notifySubscribers(
-                new Event.Builder(
-                    game.getCaseId(),
-                    "Enter Player Name",
-                    java.time.Instant.now().toString()
-                )
-                .result(p.getName() + " added")
-                .playerId(name)
-                .build()
-            );
-        }
-
-        System.out.println("\n" +
-        "*******************************************\n" +
-        "*           WELCOME TO JEOPARDY!          *\n" +
-        "*******************************************\n");
-        System.out.println("Choosing a random player to start...");
-
-        game.setCurrentPlayer((int)(Math.random() * numPlayers));
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Player " + game.getCurrentPlayerName() + " goes first!\n");
-
+        //Game loop
         game.start();
         game.end();
-        game.notifySubscribers(
-            new Event.Builder(
-                game.getCaseId(),
-                "Exit Game",
-                java.time.Instant.now().toString()
-            )
-            .playerId("System")
-            .build()
-        );
 
-        game.notifySubscribers(
-            new Event.Builder(
-                game.getCaseId(),
-                "Generate Report",
-                java.time.Instant.now().toString()
-            )
-            .playerId("System")
-            .build()
-        );
+        //Game Log and Report generation
         game.generateReport();
-
-        game.notifySubscribers(
-            new Event.Builder(
-                game.getCaseId(),
-                "Generate Event Log",
-                java.time.Instant.now().toString()
-            )
-            .playerId("System")
-            .build()
-        );
-        Logger.getLogger().generateEventLogs();
+        game.generateEventLogs();
     }
 }

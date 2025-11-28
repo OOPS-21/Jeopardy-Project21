@@ -34,14 +34,61 @@ public class Game {
         return gameInstance;
     }
 
+    public void startUp() {
+        notifySubscribers(
+            new Event.Builder(
+                this.getCaseId(),
+                "Start Game",
+                java.time.Instant.now().toString()
+            )
+            .playerId("System")
+            .build()
+        );
+    }
+
     public void setLoaderFactory(GameLoaderFactory factory) {
         this.loaderFactory = factory;
     }
 
     public void loadGame(String filename) {
+        this.notifySubscribers(
+            new Event.Builder(
+                this.getCaseId(),
+                "Load File",
+                java.time.Instant.now().toString()
+            )
+            .playerId("System")
+            .build()
+        );
+
         GameLoader loader = loaderFactory.createLoader();
         this.gameData = loader.load(filename);
         this.board = new GameBoard(this.gameData);
+
+        this.notifySubscribers(
+            new Event.Builder(
+                this.getCaseId(),
+                "File Loaded Successfully", 
+                java.time.Instant.now().toString()
+            )
+            .playerId("System")
+            .build()
+        );
+    }
+
+    public void setPlayerCount(int numPlayers) {
+        this.notifySubscribers(
+            new Event.Builder(
+                this.getCaseId(),
+                "Select Player Count",
+                java.time.Instant.now().toString()
+            )
+            .result(numPlayers + " selected")
+            .playerId("System")
+            .build()
+        );
+
+            
     }
 
     public void subscribe(Subscriber subscriber) {
@@ -62,11 +109,19 @@ public class Game {
         return this.caseId;
     }
 
-    public void addPlayer(Player player) {
-        if (players.size() >= 4) {
-            throw new IllegalStateException("Cannot have more than 4 players.");
-        }
-        players.add(player);
+    public void addPlayer(Player p) {
+        players.add(p);
+
+        this.notifySubscribers(
+            new Event.Builder(
+                this.getCaseId(),
+                "Enter Player Name",
+                java.time.Instant.now().toString()
+            )
+            .result(p.getName() + " added")
+            .playerId(p.getName())
+            .build()
+        );
     }
 
     public void setCurrentPlayer(int index) {
@@ -90,6 +145,20 @@ public class Game {
     }
 
     public void start() {
+        System.out.println("\n" +
+        "*******************************************\n" +
+        "*           WELCOME TO JEOPARDY!          *\n" +
+        "*******************************************\n");
+        System.out.println("Choosing a random player to start...");
+
+        this.setCurrentPlayer((int)(Math.random() * players.size()));
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Player " + this.getCurrentPlayerName() + " goes first!\n");
+        
         while (!board.allQuestionsAnswered()) {
             board.displayBoard();
 
@@ -207,6 +276,16 @@ public class Game {
         "*******************************************\n");
         System.out.println("Thanks for Playing!");
         displayScores();
+
+        this.notifySubscribers(
+            new Event.Builder(
+                this.getCaseId(),
+                "Exit Game",
+                java.time.Instant.now().toString()
+            )
+            .playerId("System")
+            .build()
+        );
     }
     
     public void displayScores() {
@@ -282,6 +361,30 @@ public class Game {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        this.notifySubscribers(
+            new Event.Builder(
+                this.getCaseId(),
+                "Generate Report",
+                java.time.Instant.now().toString()
+            )
+            .playerId("System")
+            .build()
+        );
+    }
+
+    public void generateEventLogs() {
+        this.notifySubscribers(
+            new Event.Builder(
+                this.getCaseId(),
+                "Generate Event Log",
+                java.time.Instant.now().toString()
+            )
+            .playerId("System")
+            .build()
+        );
+        
+        Logger.getLogger().generateEventLogs();
     }
 
 }
