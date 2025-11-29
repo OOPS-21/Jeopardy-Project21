@@ -1,0 +1,3 @@
+Category,Value,Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer
+General,100,Which of the following declares an integer variable in C++?,int num,float num,num int,integer num,A
+General,200,Which data type is used to store a single character?,string,char,bool,text,B
