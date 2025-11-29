@@ -35,7 +35,14 @@ public class GameBoard {
     }
 
 
-
+    public Category getCategory(String name) {
+        for (Category c : gameData.getCategories()) {
+            if (c.getName().equals(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
 
     public Question getQuestion(Category category, int pointValue) {
         return gameData.getQuestion(category, pointValue);

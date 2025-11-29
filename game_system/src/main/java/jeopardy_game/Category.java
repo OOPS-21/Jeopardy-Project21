@@ -20,5 +20,4 @@ public class Category {
     public void addQuestion(Question newQuestion){
         this.questions.add(newQuestion); 
     }
-
 }
