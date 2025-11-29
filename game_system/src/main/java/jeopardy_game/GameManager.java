@@ -46,10 +46,10 @@ public class GameManager {
             game.notifySubscribers(
                     new Event.Builder(
                         game.getCaseId(),
+                        player.getName(),
                         "Select Category",
                         java.time.Instant.now().toString()
                     )
-                    .playerId(player.getName())
                     .category(c.getName())
                     .build()
             );
@@ -60,10 +60,10 @@ public class GameManager {
             game.notifySubscribers(
                     new Event.Builder(
                         game.getCaseId(),
+                        player.getName(),
                         "Select Question",
                         java.time.Instant.now().toString()
                     )
-                    .playerId(player.getName())
                     .questionValue(q.getPoints())
                     .questionText(q.getQuestionStr())
                     .category(c.getName())
@@ -77,10 +77,10 @@ public class GameManager {
             game.notifySubscribers(
                 new Event.Builder(
                     game.getCaseId(),
+                    player.getName(),
                     "Answer Question",
                     java.time.Instant.now().toString()
                 )
-                .playerId(player.getName())
                 .questionValue(q.getPoints())
                 .questionText(q.getQuestionStr())
                 .category(c.getName())
@@ -126,10 +126,10 @@ public class GameManager {
         game.notifySubscribers(
             new Event.Builder(
                 game.getCaseId(),
+                "System",
                 "Exit Game",
                 java.time.Instant.now().toString()
             )
-            .playerId("System")
             .build()
         );
     }
@@ -160,10 +160,10 @@ public class GameManager {
         game.notifySubscribers(
             new Event.Builder(
                 game.getCaseId(),
+                p.getName(),
                     "Score Updated",
                     java.time.Instant.now().toString()
             )
-            .playerId(p.getName())
             .questionValue(q.getPoints())
             .category(c.getName())
             .answerGiven(ans)

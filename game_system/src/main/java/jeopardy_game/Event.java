@@ -81,14 +81,13 @@ public class Event {
          * @param activity the action performed
          * @param timestamp the time at which the event occurred
          */
-        public Builder(String caseId, String activity, String timestamp) {
+        public Builder(String caseId, String playerId, String activity, String timestamp) {
             this.caseId = caseId;
+            this.playerId = playerId;
             this.activity = activity;
             this.timestamp = timestamp;
         }
 
-         /** Sets the player ID for this event. */
-        public Builder playerId(String playerId) { this.playerId = playerId; return this; }
         /** Sets the category associated with this event. */
         public Builder category(String category) { this.category = category; return this; }
         /** Sets the point value of the question involved in the event. */

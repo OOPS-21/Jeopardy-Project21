@@ -149,7 +149,7 @@ public class InputHandler {
             cIndex = Integer.parseInt(input) - 1;
         } catch (NumberFormatException e) {
             System.out.println("Invalid input. Please enter a number.");
-            return null;
+            return new Category("INVALID");
         }
 
         if (cIndex >= 0 && cIndex < categories.size()) {
@@ -167,12 +167,12 @@ public class InputHandler {
                 return c;
             } else {
                 System.out.println("All questions in that category have been answered. Choose another.");
-                return null;
+                return new Category("INVALID");
             }
         
         } else {
             System.out.println("Invalid category number. Try again.");
-            return null;
+            return new Category("INVALID");
         }
     }
 
@@ -194,14 +194,14 @@ public class InputHandler {
             qIndex = Integer.parseInt(input) - 1;
         } catch (NumberFormatException e) {
             System.out.println("Invalid input. Please enter a number.");
-            return null;
+            return new Question("INVALID", 0, null, null);
         }
 
         if (qIndex >= 0 && qIndex < questions.size() && !questions.get(qIndex).isAnswered()) {
             return questions.get(qIndex);
         } else {
             System.out.println("Invalid choice or question already answered. Try again.");
-            return null;
+            return new Question("INVALID", 0, null, null);
         }
     }
 
@@ -214,7 +214,7 @@ public class InputHandler {
     public String getAnswerInput(Question q) {
         while (true) {
             System.out.print("Choose an answer by letter: ");
-            String answer = sc.next().trim().toUpperCase();
+            String answer = sc.nextLine().trim().toUpperCase();
 
             if (answer.equalsIgnoreCase("end")) return null;
 

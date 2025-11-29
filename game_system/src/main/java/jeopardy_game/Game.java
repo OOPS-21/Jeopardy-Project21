@@ -52,11 +52,11 @@ public class Game {
     public void startUp() {
         notifySubscribers(
             new Event.Builder(
-                this.getCaseId(),
+                caseId,
+                "System",
                 "Start Game",
                 java.time.Instant.now().toString()
             )
-            .playerId("System")
             .build()
         );
     }
@@ -75,13 +75,13 @@ public class Game {
      * @param filename the name of the game file to load
      */
     public void loadGame(String filename) {
-        this.notifySubscribers(
+        notifySubscribers(
             new Event.Builder(
-                this.getCaseId(),
+                caseId,
                 "Load File",
+                "System",
                 java.time.Instant.now().toString()
             )
-            .playerId("System")
             .build()
         );
 
@@ -89,13 +89,13 @@ public class Game {
         this.gameData = loader.load(filename);
         this.board = new GameBoard(this.gameData);
 
-        this.notifySubscribers(
+        notifySubscribers(
             new Event.Builder(
-                this.getCaseId(),
+                caseId,
+                "System",
                 "File Loaded Successfully", 
                 java.time.Instant.now().toString()
             )
-            .playerId("System")
             .build()
         );
     }
@@ -105,14 +105,14 @@ public class Game {
      * @param numPlayers the number of players chosen
      */
     public void setPlayerCount(int numPlayers) {
-        this.notifySubscribers(
+        notifySubscribers(
             new Event.Builder(
-                this.getCaseId(),
+                caseId,
+                "System",
                 "Select Player Count",
                 java.time.Instant.now().toString()
             )
             .result(numPlayers + " selected")
-            .playerId("System")
             .build()
         );   
     }
@@ -165,11 +165,11 @@ public class Game {
         notifySubscribers(
             new Event.Builder(
                 caseId,
+                p.getName(),
                 "Enter Player Name",
                 java.time.Instant.now().toString()
             )
             .result(p.getName() + " added")
-            .playerId(p.getName())
             .build()
         );
     }
@@ -249,13 +249,13 @@ public class Game {
         List<Event> events = Logger.getLogger().getEvents();
         new Report().generate(this, events);
         
-        this.notifySubscribers(
+        notifySubscribers(
             new Event.Builder(
-                this.getCaseId(),
+                caseId,
+                "System",
                 "Generate Report",
                 java.time.Instant.now().toString()
             )
-            .playerId("System")
             .build()
         );
     }
@@ -264,13 +264,13 @@ public class Game {
      * Generates the event log for the game and notifies subscribers.
      */
     public void generateEventLogs() {
-        this.notifySubscribers(
+        notifySubscribers(
             new Event.Builder(
-                this.getCaseId(),
+                caseId,
+                "System",
                 "Generate Event Log",
                 java.time.Instant.now().toString()
             )
-            .playerId("System")
             .build()
         );
         

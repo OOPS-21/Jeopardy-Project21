@@ -80,9 +80,9 @@ public class Player {
      */
     public Category selectCategory(GameBoard board, InputHandler input) {
         List<Category> categories = board.getGameData().getCategories();
-        Category selectedCategory = null;
+        Category selectedCategory;
 
-        while (selectedCategory == null) {
+        while (true) {
             for (int i = 0; i < categories.size(); i++) {
                 Category c = categories.get(i);
                 boolean hasUnanswered = false;
@@ -99,8 +99,12 @@ public class Player {
             }
 
             selectedCategory = input.getCategoryInput(categories);
+            if (selectedCategory == null) return null;
+
+            if (!selectedCategory.getName().equals("INVALID")) {
+                return selectedCategory;
+            }
         }
-        return selectedCategory;
     }
 
     /**
@@ -118,9 +122,9 @@ public class Player {
         }
 
         List<Question> questions = selectedCategory.getQuestions();
-        Question selectedQuestion = null;
+        Question selectedQuestion;
 
-        while (selectedQuestion == null) {
+        while (true) {
             System.out.println("Select a question:");
             for (int i = 0; i < questions.size(); i++) {
                 Question q = questions.get(i);
@@ -130,8 +134,11 @@ public class Player {
             }
 
             selectedQuestion = input.getQuestionInput(questions);
+            if (selectedQuestion == null) return null;
+            if (!selectedQuestion.getQuestionStr().equals("INVALID")) {
+                return selectedQuestion;
+            }
         }
-        return selectedQuestion;
     }
 
     /**
