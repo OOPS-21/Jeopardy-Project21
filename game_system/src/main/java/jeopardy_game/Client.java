@@ -2,7 +2,21 @@ package jeopardy_game;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Entry point for the Jeopardy game application.
+ * 
+ * Handles:
+ *  - Initialising the game
+ *  - Selecting and loading the question file
+ *  - Setting up players
+ *  - Starting and ending the game session
+ *  - Generating game report and event logs
+ */
 public class Client {
+    /**
+     * Main method to run the Jeopardy game.
+     * @param args Command-line arguments (not used)
+     */
     public static void main(String[] args) {
         InputHandler input = new InputHandler();
 

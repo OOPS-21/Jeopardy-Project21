@@ -1,12 +1,25 @@
 package jeopardy_game;
 
+/**
+ * Manages the gameplay session for a Jeopardy game.
+ * Handles turns, question selection, answer evaluation, and score updates.
+ */
 public class GameManager {
     private Game game;
 
+    /**
+     * Constructs a GameManager for a given Game instance.
+     * @param game the Game to manage
+     */
     public GameManager(Game game) {
         this.game = game;
     }
 
+    /**
+     * Starts the gameplay session.
+     * Handles player turns, category/question selection, answer evaluation,
+     * score updates, and notifies subscribers of game events.
+     */
     public void startSession() {
         System.out.println("\n" +
         "*******************************************\n" +
@@ -98,6 +111,10 @@ public class GameManager {
         }  
     }
 
+    /**
+     * Ends the gameplay session.
+     * Displays final scores and notifies subscribers that the game has ended.
+     */
     public void endSession() {
         System.out.println("\n" +
         "*******************************************\n" +
@@ -117,6 +134,10 @@ public class GameManager {
         );
     }
 
+    /**
+     * Pauses the game for a specified number of milliseconds.
+     * @param millis the duration to pause in milliseconds
+     */
     private void pause(int millis) {
         try {
             Thread.sleep(millis);
@@ -125,6 +146,14 @@ public class GameManager {
         }
     }
 
+    /**
+     * Sends a score update event to all subscribers.
+     * @param p the player who answered
+     * @param c the category of the question
+     * @param q the question answered
+     * @param ans the answer given by the player
+     * @param isCorrect true if the answer was correct, false otherwise
+     */
     private void sendScoreUpdate(Player p, Category c, Question q, String ans, boolean isCorrect) {
         String result = isCorrect ? "Correct" : "Wrong";
 

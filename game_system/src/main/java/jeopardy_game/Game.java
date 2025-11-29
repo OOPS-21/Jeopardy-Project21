@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Represents the main Jeopardy game.
+ * Implements a singleton pattern to ensure only one game instance exists.
+ * Handles game setup, player management, session management, observers, 
+ * and report/log generation.
+ */
 public class Game {
     private static Game gameInstance;
     private GameManager manager;
@@ -15,7 +21,10 @@ public class Game {
     private GameLoaderFactory loaderFactory;
     private int currentPlayer;
 
-    //Singleton components
+    /**
+     * Private constructor for singleton pattern.
+     * Initializes subscriber and player lists and the GameManager.
+     */
     private Game() {
         this.caseId = UUID.randomUUID().toString();
         this.subscribers =  new ArrayList<>();
@@ -24,6 +33,10 @@ public class Game {
         this.manager = new GameManager(this);
     }
     
+    /**
+     * Returns the single instance of the Game.
+     * @return the singleton Game instance
+     */
     public static Game getGame() {
         if (gameInstance == null) {
             gameInstance = new Game();
@@ -32,6 +45,10 @@ public class Game {
     }
 
     //Setup Methods
+
+    /**
+     * Initialises the game and notifies subscribers that the game has started.
+     */
     public void startUp() {
         notifySubscribers(
             new Event.Builder(
@@ -44,10 +61,19 @@ public class Game {
         );
     }
 
+    /**
+     * Sets the factory used to load game data.
+     * @param factory the GameLoaderFactory to use
+     */
     public void setLoaderFactory(GameLoaderFactory factory) {
         this.loaderFactory = factory;
     }
 
+    /**
+     * Loads the game data from a file and initialises the game board.
+     * Notifies subscribers before and after loading.
+     * @param filename the name of the game file to load
+     */
     public void loadGame(String filename) {
         this.notifySubscribers(
             new Event.Builder(
@@ -74,6 +100,10 @@ public class Game {
         );
     }
 
+    /**
+     * Notifies subscribers of the number of players selected.
+     * @param numPlayers the number of players chosen
+     */
     public void setPlayerCount(int numPlayers) {
         this.notifySubscribers(
             new Event.Builder(
@@ -87,19 +117,36 @@ public class Game {
         );   
     }
 
+    /**
+     * Returns the unique identifier for this game session.
+     * @return the game case ID
+     */
     public String getCaseId() {
         return this.caseId;
     }
 
-    //Observer components
+    //Observer methods
+
+    /**
+     * Subscribes a new observer to the game events.
+     * @param subscriber the subscriber to add
+     */
     public void subscribe(Subscriber subscriber) {
         subscribers.add(subscriber);
     }
 
+    /**
+     * Unsubscribes an observer from the game events.
+     * @param subscriber the subscriber to remove
+     */
     public void unsubscribe(Subscriber subscriber) {
         subscribers.remove(subscriber);
     }
 
+    /**
+     * Notifies all subscribers of a game event.
+     * @param event the event to send
+     */
     public void notifySubscribers(Event event) {
         for (Subscriber subscriber : subscribers) {
             subscriber.update(event);
@@ -107,6 +154,11 @@ public class Game {
     }
 
     //Player & Board methods
+
+    /**
+     * Adds a player to the game and notifies subscribers.
+     * @param p the player to add
+     */
     public void addPlayer(Player p) {
         players.add(p);
 
@@ -122,36 +174,67 @@ public class Game {
         );
     }
 
+    /**
+     * Returns the list of players in the game.
+     * @return the players
+     */
     public List<Player> getPlayers() {
         return players;
     }
 
+    /**
+     * Returns the current player whose turn it is.
+     * @return the current Player
+     */
     public Player getCurrentPlayer() {
         return players.get(currentPlayer);
     }
 
+    /**
+     * Returns the name of the current player.
+     * @return the current player's name
+     */
     public String getCurrentPlayerName() {
         return getCurrentPlayer().getName();
     }
 
+    /**
+     * Sets the index of the current player.
+     * @param index the player index
+     */
     public void setCurrentPlayer(int index) {
         this.currentPlayer = index;
     }
 
+    /**
+     * Returns the game board.
+     * @return the GameBoard
+     */
     public GameBoard getBoard() {
         return this.board;
     }
 
     //Session methods
+
+    /**
+     * Starts the game session using GameManager.
+     */
     public void start() {
         manager.startSession();
     }
 
+    /**
+     * Ends the game session using GameManager.
+     */
     public void end() {
         manager.endSession();
     }
     
     //Output and Logging
+
+    /**
+     * Displays the current scores of all players.
+     */
     public void displayScores() {
         System.out.println("Current Scores:");
         for (Player p : players) {
@@ -159,6 +242,9 @@ public class Game {
         }
     }
 
+    /**
+     * Generates a gameplay report using the Report class and notifies subscribers.
+     */
     public void generateReport() {
         List<Event> events = Logger.getLogger().getEvents();
         new Report().generate(this, events);
@@ -174,6 +260,9 @@ public class Game {
         );
     }
 
+    /**
+     * Generates the event log for the game and notifies subscribers.
+     */
     public void generateEventLogs() {
         this.notifySubscribers(
             new Event.Builder(
