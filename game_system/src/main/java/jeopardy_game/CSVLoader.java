@@ -10,8 +10,21 @@ import java.util.Map;
 
 import com.opencsv.CSVReader;
 
+/**
+ * Loads game data from a CSV file and converts it into Category and Question objects.
+ * This class reads CSV files packaged within the application's resources.
+ */
 public class CSVLoader implements GameLoader {
-    // Implement the load method to load game data from a CSV file
+    
+    /**
+     * Loads game data from the specified CSV file.
+     * The CSV must follow the structure:
+     * Category, Value, Question, OptionA, OptionB, OptionC, OptionD, CorrectAnswer
+     *
+     * @param filename the name of the CSV resource file to load
+     * @return a GameData object containing all categories and questions
+     * @throws RuntimeException if the file cannot be read or parsed
+     */
     @Override
     public GameData load(String filename) {
         List<Category> categories = new ArrayList<>();
@@ -53,6 +66,8 @@ public class CSVLoader implements GameLoader {
                 Question question = new Question(questionStr, value, optionsMap, correctAnswer);
                 category.addQuestion(question);   
             }
+
+            reader.close();
         } 
         
         catch (Exception e) {

@@ -8,8 +8,29 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Loads game data from a JSON file and constructs the appropriate Category
+ * and Question objects. The JSON must represent a list of objects where each
+ * object contains category information, question text, point value, options
+ * and the correct answer.
+ */
 public class JSONLoader implements GameLoader {
-    // Implement the load method to load game data from a JSON file
+
+    /**
+     * Loads game data from the specified JSON file.
+     * Expected JSON structure is a list of items:
+     * {
+     *   "Category": "Science",
+     *   "Value": 200,
+     *   "Question": "What is H2O?",
+     *   "Options": {"A": "Water", "B": "Oxygen", "C": "Hydrogen", "D": "Helium"},
+     *   "CorrectAnswer": "A"
+     * }
+     *
+     * @param filename the name of the JSON resource file to load
+     * @return a GameData object containing all parsed categories and questions
+     * @throws RuntimeException if the JSON cannot be read or parsed
+     */
     @Override
     public GameData load(String filename) {
         List<Category> categories = new ArrayList<>();
@@ -46,7 +67,7 @@ public class JSONLoader implements GameLoader {
         catch (Exception e) {
             throw new RuntimeException("Error loading game data from JSON file: " + filename, e);
         }
-      
+
         return new GameData(categories);
     }
 }

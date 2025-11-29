@@ -8,8 +8,27 @@ import java.util.Map;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
+/**
+ * Loads game data from an XML file and constructs the appropriate Category
+ * and Question objects. The XML is expected to contain a list of question items,
+ * each with category information, point value, question text, options, and
+ * the correct answer.
+ */
 public class XMLLoader implements GameLoader {
-    // Implement the load method to load game data from an XML file
+    
+    /**
+     * Loads game data from an XML file. The XML must contain a root element
+     * with a list of QuestionItem entries, each containing:
+     * - Category
+     * - Value
+     * - QuestionText
+     * - Options (OptionA, OptionB, OptionC, OptionD)
+     * - CorrectAnswer
+
+     * @param filename the name of the XML resource file
+     * @return a GameData object containing all parsed categories and questions
+     * @throws RuntimeException if the file cannot be found or parsed
+     */
     @Override
     public GameData load(String filename) {
         List<Category> categories = new ArrayList<>();
