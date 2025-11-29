@@ -1,12 +1,8 @@
 package jeopardy_game;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class Game {
     private static Game gameInstance;
@@ -18,9 +14,8 @@ public class Game {
     private GameBoard board;
     private GameLoaderFactory loaderFactory;
     private int currentPlayer;
-    private final String reportFile = "game_report.txt";
 
-
+    //Singleton components
     private Game() {
         this.caseId = UUID.randomUUID().toString();
         this.subscribers =  new ArrayList<>();
@@ -36,6 +31,7 @@ public class Game {
         return gameInstance;
     }
 
+    //Setup Methods
     public void startUp() {
         notifySubscribers(
             new Event.Builder(
@@ -91,6 +87,11 @@ public class Game {
         );   
     }
 
+    public String getCaseId() {
+        return this.caseId;
+    }
+
+    //Observer components
     public void subscribe(Subscriber subscriber) {
         subscribers.add(subscriber);
     }
@@ -105,16 +106,13 @@ public class Game {
         }
     }
 
-    public String getCaseId() {
-        return this.caseId;
-    }
-
+    //Player & Board methods
     public void addPlayer(Player p) {
         players.add(p);
 
-        this.notifySubscribers(
+        notifySubscribers(
             new Event.Builder(
-                this.getCaseId(),
+                caseId,
                 "Enter Player Name",
                 java.time.Instant.now().toString()
             )
@@ -124,8 +122,8 @@ public class Game {
         );
     }
 
-    public void setCurrentPlayer(int index) {
-        this.currentPlayer = index;
+    public List<Player> getPlayers() {
+        return players;
     }
 
     public Player getCurrentPlayer() {
@@ -136,14 +134,15 @@ public class Game {
         return getCurrentPlayer().getName();
     }
 
-    public List<Player> getPlayers() {
-        return players;
+    public void setCurrentPlayer(int index) {
+        this.currentPlayer = index;
     }
 
     public GameBoard getBoard() {
         return this.board;
     }
 
+    //Session methods
     public void start() {
         manager.startSession();
     }
@@ -152,6 +151,7 @@ public class Game {
         manager.endSession();
     }
     
+    //Output and Logging
     public void displayScores() {
         System.out.println("Current Scores:");
         for (Player p : players) {
@@ -160,72 +160,9 @@ public class Game {
     }
 
     public void generateReport() {
-        Logger logger = Logger.getLogger();
-        List<Event> events = logger.getEvents();
-        if (events.isEmpty()) {
-            System.out.println("No events to report.");
-            return;
-        }
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(reportFile))) {
-            writer.write("JEOPARDY PROGRAMMING GAME REPORT\n");
-            writer.write("================================\n\n");
-
-            writer.write("Case ID: " + events.get(0).getCaseId() + "\n\n");
-
-            writer.write("Players: ");
-            String playerList = players.stream()
-                    .map(Player::getName)
-                    .collect(Collectors.joining(", "));
-            writer.write(playerList + "\n\n");
-
-            writer.write("Gameplay Summary:\n-----------------\n");
-
-            Map<String, Category> categoryMap = board.getGameData().getCategories()
-                .stream()
-                .collect(Collectors.toMap(Category::getName, c -> c));
-
-            int turn = 1;
-            for (Event event : events) {
-                if (!event.getActivity().equals("Score Updated")) {
-                    continue;
-                }
-
-                Category cat = categoryMap.get(event.getCategory());
-                Question q = null;
-                if (cat != null) {
-                    q = board.getQuestion(cat, event.getQuestionValue());
-                }
-
-                String questionText = q.getQuestionStr();
-                String points = event.getQuestionValue().toString();
-                String answerLetter = event.getAnswerGiven();
-                String answerText = q.getOptions().get(answerLetter);
-                String correctness = event.getResult().trim();
-                String playerName = event.getPlayerId();
-
-                writer.write("Turn " + turn + ": " + playerName + " selected " +
-                        event.getCategory() + " for " + points + " pts\n");
-                writer.write("Question: " + questionText + "\n");
-                writer.write("Answer: " + answerText +
-                        " — " + correctness + " (" + (correctness.equals("Correct") ? "+" : "-") + points + " pts)\n");
-                writer.write("Score after turn: " + playerName + " = " + event.getScoreAfterPlay().toString() + "\n\n");
-
-                turn++;
-            }
-
-            // Final scores
-            writer.write("Final Scores:\n");
-            for (Player p : players) {
-                writer.write(p.getName() + ": " + p.getScore() + "\n");
-            }
-
-            System.out.println("\n>>Game Report generated: " + reportFile);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        List<Event> events = Logger.getLogger().getEvents();
+        new Report().generate(this, events);
+        
         this.notifySubscribers(
             new Event.Builder(
                 this.getCaseId(),
@@ -250,5 +187,4 @@ public class Game {
         
         Logger.getLogger().generateEventLogs();
     }
-
 }
