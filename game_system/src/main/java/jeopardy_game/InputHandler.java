@@ -3,13 +3,27 @@ package jeopardy_game;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Handles user input for the Jeopardy game.
+ * Provides methods to select files, players, categories, questions, and answers.
+ * All input is validated and reprompted if invalid.
+ */
 public class InputHandler {
     private final Scanner sc;
 
+    /**
+     * Constructs a new InputHandler with a Scanner for reading console input.
+     */
     public InputHandler() {
         sc = new Scanner(System.in);
     }
 
+    /**
+     * Prompts the user to select a file from a list of options.
+     *
+     * @param fileOptions a list of available file names
+     * @return the file name selected by the user
+     */
     public String getFileInput(List<String> fileOptions) {
         System.out.println("Choose a file to load:");
 
@@ -42,6 +56,13 @@ public class InputHandler {
         return selectedFile;
     }
 
+    /**
+     * Returns the appropriate GameLoaderFactory based on the file extension.
+     *
+     * @param selectedFile the file name
+     * @return a GameLoaderFactory instance for the file type
+     * @throws IllegalArgumentException if the file format is unknown
+     */
     public GameLoaderFactory selectFactory(String selectedFile) {
         GameLoaderFactory factory;
 
@@ -61,6 +82,11 @@ public class InputHandler {
         return factory;
     }
 
+    /**
+     * Prompts the user to enter the number of players.
+     *
+     * @return the number of players (1-4)
+     */
     public int getPlayerInput() {
         int numPlayers = 0;
         while (true) {
@@ -84,6 +110,12 @@ public class InputHandler {
         return numPlayers;
     }
 
+    /**
+     * Prompts the user to enter a player's name.
+     *
+     * @param index the player's index in the game
+     * @return the entered player name
+     */
     public String getPlayerNameInput(int index) {
         String name;
 
@@ -99,6 +131,13 @@ public class InputHandler {
         }
     }
 
+    /**
+     * Prompts the user to select a category from a list.
+     * Only returns categories with unanswered questions.
+     *
+     * @param categories the list of categories
+     * @return the selected Category or null if "end" is entered
+     */
     public Category getCategoryInput(List<Category> categories) {
         System.out.print("Choose a category by number: ");
         String input = sc.nextLine().trim();
@@ -137,6 +176,13 @@ public class InputHandler {
         }
     }
 
+    /**
+     * Prompts the user to select a question from a list.
+     * Only returns unanswered questions.
+     *
+     * @param questions the list of questions
+     * @return the selected Question or null if "end" is entered
+     */
     public Question getQuestionInput(List<Question> questions) {
         System.out.print("Choose a question by number: ");
         String input = sc.nextLine().trim();
@@ -159,6 +205,12 @@ public class InputHandler {
         }
     }
 
+    /**
+     * Prompts the user to select an answer for a given question.
+     *
+     * @param q the Question to answer
+     * @return the chosen answer letter or null if "end" is entered
+     */
     public String getAnswerInput(Question q) {
         while (true) {
             System.out.print("Choose an answer by letter: ");
