@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 public class Game {
     private static Game gameInstance;
+    private GameManager manager;
     private final String caseId;
     private GameData gameData;
     private List<Subscriber> subscribers;
@@ -25,6 +26,7 @@ public class Game {
         this.subscribers =  new ArrayList<>();
         this.players =  new ArrayList<>();
         this.gameData = null;
+        this.manager = new GameManager(this);
     }
     
     public static Game getGame() {
@@ -86,9 +88,7 @@ public class Game {
             .result(numPlayers + " selected")
             .playerId("System")
             .build()
-        );
-
-            
+        );   
     }
 
     public void subscribe(Subscriber subscriber) {
@@ -145,147 +145,11 @@ public class Game {
     }
 
     public void start() {
-        System.out.println("\n" +
-        "*******************************************\n" +
-        "*           WELCOME TO JEOPARDY!          *\n" +
-        "*******************************************\n");
-        System.out.println("Choosing a random player to start...");
-
-        this.setCurrentPlayer((int)(Math.random() * players.size()));
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Player " + this.getCurrentPlayerName() + " goes first!\n");
-        
-        while (!board.allQuestionsAnswered()) {
-            board.displayBoard();
-
-            Player player = getCurrentPlayer();
-            System.out.println("It's " + player.getName() + "'s turn!");
-
-            Category c = player.selectCategory(board);
-            if (c == null) {
-                break;
-            }
-            this.notifySubscribers(
-                    new Event.Builder(
-                        this.getCaseId(),
-                        "Select Category",
-                        java.time.Instant.now().toString()
-                    )
-                    .playerId(player.getName())
-                    .category(c.getName())
-                    .build()
-            );
-
-            Question q = player.selectQuestion(board, c);
-            if (q == null) {
-                break;
-            }
-            this.notifySubscribers(
-                    new Event.Builder(
-                        this.getCaseId(),
-                        "Select Question",
-                        java.time.Instant.now().toString()
-                    )
-                    .playerId(player.getName())
-                    .questionValue(q.getPoints())
-                    .questionText(q.getQuestionStr())
-                    .category(c.getName())
-                    .build()
-            );
-
-            q.display();
-            String answer = player.getAnswer(q);
-
-            if (answer == null) {
-                break;
-            }
-            else {
-                this.notifySubscribers(
-                    new Event.Builder(
-                        this.getCaseId(),
-                        "Answer Question",
-                        java.time.Instant.now().toString()
-                    )
-                    .playerId(player.getName())
-                    .questionValue(q.getPoints())
-                    .questionText(q.getQuestionStr())
-                    .category(c.getName())
-                    .answerGiven(answer)
-                    .build()
-                );
-
-                if (q.checkAnswer(answer)) {
-                    System.out.println(">>Correct!");
-                    player.addPoints(q.getPoints());
-                    this.notifySubscribers(
-                        new Event.Builder(
-                            this.getCaseId(),
-                            "Score Updated",
-                            java.time.Instant.now().toString()
-                        )
-                        .playerId(player.getName())
-                        .questionValue(q.getPoints())
-                        .category(c.getName())
-                        .answerGiven(answer)
-                        .result("Correct")
-                        .scoreAfterPlay(player.getScore())
-                        .build()
-                    );
-                } else {
-                    System.out.println(">>Wrong! Correct answer: " + q.getCorrectAnswer());
-                    player.subtractPoints(q.getPoints());
-                    this.notifySubscribers(
-                        new Event.Builder(
-                            this.getCaseId(),
-                            "Score Updated",
-                            java.time.Instant.now().toString()
-                        )
-                        .playerId(player.getName())
-                        .questionValue(q.getPoints())
-                        .category(c.getName())
-                        .answerGiven(answer)
-                        .result("Wrong")
-                        .scoreAfterPlay(player.getScore())
-                        .build()
-                    );
-                }
-            }
-            q.setAnswered(true);
-
-            displayScores();
-            System.out.println("\n");
-
-            currentPlayer = (currentPlayer + 1) % players.size();
-
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }    
+        manager.startSession();
     }
 
     public void end() {
-        System.out.println("\n" +
-        "*******************************************\n" +
-        "*                Game Over!               *\n" +
-        "*******************************************\n");
-        System.out.println("Thanks for Playing!");
-        displayScores();
-
-        this.notifySubscribers(
-            new Event.Builder(
-                this.getCaseId(),
-                "Exit Game",
-                java.time.Instant.now().toString()
-            )
-            .playerId("System")
-            .build()
-        );
+        manager.endSession();
     }
     
     public void displayScores() {
