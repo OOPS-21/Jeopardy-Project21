@@ -219,8 +219,8 @@ public class Game {
     /**
      * Starts the game session using GameManager.
      */
-    public void start() {
-        manager.startSession();
+    public void start(InputHandler input) {
+        manager.startSession(input);
     }
 
     /**

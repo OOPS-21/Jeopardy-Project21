@@ -47,7 +47,7 @@ public class Client {
         }
 
         //Game loop
-        game.start();
+        game.start(input);
         game.end();
 
         //Game Log and Report generation

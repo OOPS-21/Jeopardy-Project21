@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class InputHandler {
-    private Scanner sc;
+    private final Scanner sc;
 
     public InputHandler() {
         sc = new Scanner(System.in);
@@ -99,4 +99,80 @@ public class InputHandler {
         }
     }
 
+    public Category getCategoryInput(List<Category> categories) {
+        System.out.print("Choose a category by number: ");
+        String input = sc.nextLine().trim();
+
+        if (input.equalsIgnoreCase("end")) return null;
+
+        int cIndex;
+        try {
+            cIndex = Integer.parseInt(input) - 1;
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a number.");
+            return null;
+        }
+
+        if (cIndex >= 0 && cIndex < categories.size()) {
+            Category c = categories.get(cIndex);
+
+            boolean hasUnanswered = false;
+            for (Question q : c.getQuestions()) {
+                if (!q.isAnswered()) {
+                    hasUnanswered = true;
+                    break;
+                }
+            }
+
+            if (hasUnanswered) {
+                return c;
+            } else {
+                System.out.println("All questions in that category have been answered. Choose another.");
+                return null;
+            }
+        
+        } else {
+            System.out.println("Invalid category number. Try again.");
+            return null;
+        }
+    }
+
+    public Question getQuestionInput(List<Question> questions) {
+        System.out.print("Choose a question by number: ");
+        String input = sc.nextLine().trim();
+            
+        if (input.equalsIgnoreCase("end")) return null;
+            
+        int qIndex;
+        try {
+            qIndex = Integer.parseInt(input) - 1;
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input. Please enter a number.");
+            return null;
+        }
+
+        if (qIndex >= 0 && qIndex < questions.size() && !questions.get(qIndex).isAnswered()) {
+            return questions.get(qIndex);
+        } else {
+            System.out.println("Invalid choice or question already answered. Try again.");
+            return null;
+        }
+    }
+
+    public String getAnswerInput(Question q) {
+        while (true) {
+            System.out.print("Choose an answer by letter: ");
+            String answer = sc.next().trim().toUpperCase();
+
+            if (answer.equalsIgnoreCase("end")) return null;
+
+            if (q.getOptions().containsKey(answer)) {
+                return answer;
+            } 
+            else {
+                System.out.println("Invalid input. Please choose one of the available options: " 
+                    + q.getOptions().keySet());
+            }
+        }
+    }
 }

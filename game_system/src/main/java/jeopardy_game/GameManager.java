@@ -20,7 +20,7 @@ public class GameManager {
      * Handles player turns, category/question selection, answer evaluation,
      * score updates, and notifies subscribers of game events.
      */
-    public void startSession() {
+    public void startSession(InputHandler input) {
         System.out.println("\n" +
         "*******************************************\n" +
         "*           WELCOME TO JEOPARDY!          *\n" +
@@ -40,7 +40,7 @@ public class GameManager {
             Player player = game.getCurrentPlayer();
             System.out.println("It's " + player.getName() + "'s turn!");
 
-            Category c = player.selectCategory(board);
+            Category c = player.selectCategory(board, input);
             if (c == null) break;
 
             game.notifySubscribers(
@@ -54,7 +54,7 @@ public class GameManager {
                     .build()
             );
 
-            Question q = player.selectQuestion(board, c);
+            Question q = player.selectQuestion(board, c, input);
             if (q == null) break;
             
             game.notifySubscribers(
@@ -71,7 +71,7 @@ public class GameManager {
             );
 
             q.display();
-            String answer = player.getAnswer(q);
+            String answer = player.getAnswer(q, input);
             if (answer == null) break;
             
             game.notifySubscribers(
