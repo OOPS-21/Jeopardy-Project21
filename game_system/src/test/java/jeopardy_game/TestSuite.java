@@ -5,11 +5,10 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-        GameTest.class,
+        GamePlayTest.class,
         CategoryTest.class,
         QuestionTest.class,
         GameBoardTest.class,
-        GameDataTest.class,
         ParsingTest.class,
         ScoringTest.class,
         ReportingTest.class

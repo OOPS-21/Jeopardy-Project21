@@ -160,6 +160,10 @@ public class Game {
      * @param p the player to add
      */
     public void addPlayer(Player p) {
+        if (players.size() >= 4) {
+            throw new IllegalStateException("Cannot add more than 4 players");
+        }
+        
         players.add(p);
 
         notifySubscribers(
@@ -220,6 +224,9 @@ public class Game {
      * Starts the game session using GameManager.
      */
     public void start(InputHandler input) {
+        if (players.isEmpty()) {
+            throw new IllegalStateException("Cannot start game with no players");
+        }
         manager.startSession(input);
     }
 
